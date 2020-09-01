@@ -18,7 +18,8 @@ export default class Taskmanager extends Task{
     clearFields(){
         document.getElementById("name").value="";
         document.getElementById("details").value="";
-        document.getElementById("dueDate").value="";
+        document.getElementById("dueDate").value=new Date().toISOString().slice(0, 10);;
+        document.getElementById("status").value="To Do";
     }
     //store the tasks in the local storage
     storeTask(){
@@ -42,18 +43,18 @@ export default class Taskmanager extends Task{
         taskRow.innerHTML=`
         <div class="card mt-4 mr-4" style="width:18rem;">
         <div class="card-header bg-info text-white">Due Date: ${dueDate}</div>
-            <div class="card-body bg-light">
+            <div class="card-body">
             <h5 class="card-title">${name}</h5>
             <p class="card-text text-wrap">Description: ${details}</p>
             <hr>
             <p class="card-text"><strong>Assigned to:</strong> ${assignee}</p>
             <p class="card-text"><strong>Status:</strong> ${status}</p>
             <hr>
-            <button id="edit" class="btn btn-info edit mx-4 far fa-edit mr-0 ml-auto" data-id="${id}"></button>
-            <button id="delete" class="btn btn-danger delete fas fa-trash-alt mr-0 ml-auto" data-id="${id}"></button>
+            <button id="edit" class="btn btn-info edit mx-4 far fa-edit" data-id="${id}"></button>
+            <button id="delete" class="btn btn-danger delete fas fa-trash-alt" data-id="${id}"></button>
             </div> 
             </div>
-      </div>`;
+      </div>`
       document.querySelector("#example").appendChild(taskRow);
     }
     //pass the id from the call function while submitting the update and check for id in the local storage and the editing id and store it in the local storage. if no checking it will append
@@ -85,7 +86,7 @@ export default class Taskmanager extends Task{
             });
         }
     }
-    refresh(){
-        window.location.reload();   
-    }
+    // refresh(){
+    //     window.location.reload();   
+    // }
 }

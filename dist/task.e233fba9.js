@@ -204,7 +204,9 @@ var Taskmanager = /*#__PURE__*/function (_Task) {
     value: function clearFields() {
       document.getElementById("name").value = "";
       document.getElementById("details").value = "";
-      document.getElementById("dueDate").value = "";
+      document.getElementById("dueDate").value = new Date().toISOString().slice(0, 10);
+      ;
+      document.getElementById("status").value = "To Do";
     } //store the tasks in the local storage
 
   }, {
@@ -242,7 +244,7 @@ var Taskmanager = /*#__PURE__*/function (_Task) {
     value: function displayHtml(id, name, details, assignee, dueDate, status) {
       //card display
       var taskRow = document.createElement("col");
-      taskRow.innerHTML = "\n        <div class=\"card mt-4 mr-4\" style=\"width:18rem;\">\n        <div class=\"card-header bg-info text-white\">Due Date: ".concat(dueDate, "</div>\n            <div class=\"card-body bg-light\">\n            <h5 class=\"card-title\">").concat(name, "</h5>\n            <p class=\"card-text text-wrap\">Description: ").concat(details, "</p>\n            <hr>\n            <p class=\"card-text\"><strong>Assigned to:</strong> ").concat(assignee, "</p>\n            <p class=\"card-text\"><strong>Status:</strong> ").concat(status, "</p>\n            <hr>\n            <button id=\"edit\" class=\"btn btn-info edit mx-4 far fa-edit mr-0 ml-auto\" data-id=\"").concat(id, "\"></button>\n            <button id=\"delete\" class=\"btn btn-danger delete fas fa-trash-alt mr-0 ml-auto\" data-id=\"").concat(id, "\"></button>\n            </div> \n            </div>\n      </div>");
+      taskRow.innerHTML = "\n        <div class=\"card mt-4 mr-4\" style=\"width:18rem;\">\n        <div class=\"card-header bg-info text-white\">Due Date: ".concat(dueDate, "</div>\n            <div class=\"card-body\">\n            <h5 class=\"card-title\">").concat(name, "</h5>\n            <p class=\"card-text text-wrap\">Description: ").concat(details, "</p>\n            <hr>\n            <p class=\"card-text\"><strong>Assigned to:</strong> ").concat(assignee, "</p>\n            <p class=\"card-text\"><strong>Status:</strong> ").concat(status, "</p>\n            <hr>\n            <button id=\"edit\" class=\"btn btn-info edit mx-4 far fa-edit\" data-id=\"").concat(id, "\"></button>\n            <button id=\"delete\" class=\"btn btn-danger delete fas fa-trash-alt\" data-id=\"").concat(id, "\"></button>\n            </div> \n            </div>\n      </div>");
       document.querySelector("#example").appendChild(taskRow);
     } //pass the id from the call function while submitting the update and check for id in the local storage and the editing id and store it in the local storage. if no checking it will append
 
@@ -294,12 +296,10 @@ var Taskmanager = /*#__PURE__*/function (_Task) {
           _this2.addTask(item.id, item.name, item.details, item.assignee, item.dueDate, item.status);
         });
       }
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      window.location.reload();
-    }
+    } // refresh(){
+    //     window.location.reload();   
+    // }
+
   }]);
 
   return Taskmanager;
@@ -330,12 +330,18 @@ var errormsg = document.getElementById("errormsg");
 var errorMsg1 = document.querySelector("#errorMsg1");
 var errorMsg2 = document.querySelector("#errorMsg2");
 var errorMsg3 = document.querySelector("#errorMsg3");
+var errorMsg4 = document.querySelector("#errorMsg4");
 var dateElement = document.getElementById("#date");
 var todo = document.querySelector("#todo");
 var progress = document.querySelector("#progress");
 var review = document.querySelector("#review");
 var done = document.querySelector("#done");
-var allDisplay = document.querySelector("#alldisplay"); // const options = {weekday : "long", month:"short", day:"numeric"};
+var overdue = document.querySelector("#overdue");
+var allDisplay = document.querySelector("#alldisplay");
+var formCancel = document.querySelector("#formCancel");
+var d = new Date();
+var today = [d.getFullYear(), ('0' + (d.getMonth() + 1)).slice(-2), ('0' + d.getDate()).slice(-2)].join('-');
+dueDate.value = today; // const options = {weekday : "long", month:"short", day:"numeric"};
 // const today = new Date();
 // dateElement.innerHTML = today.toLocaleDateString("en-US", options);
 //declaration for form, three inpue fields,table display,submit button for store this item and hidden field for id - check for the class and id in the HTML
@@ -347,47 +353,63 @@ newTask.displayTask();
 name.addEventListener("input", function (event) {
   event.preventDefault();
 
-  if (event.target.value && event.target.value.length <= 8) {
+  if (event.target.value && event.target.value.length <= 8 || event.target.value.length == 0) {
     errorMsg1.innerHTML = "Mandatory must enter 8 characters of length";
     errorMsg1.style.color = "red";
     name.focus();
+    submit.disabled = true;
   } else {
     errorMsg1.innerHTML = "Looks Good!";
     errorMsg1.style.color = "purple";
+    submit.disabled = false;
   }
 });
 details.addEventListener("input", function (event) {
   event.preventDefault();
 
-  if (event.target.value && event.target.value.length <= 15) {
+  if (event.target.value && event.target.value.length <= 15 || event.target.value.length == 0) {
     errorMsg2.innerHTML = "Mandatory must enter 15 characters of length";
     errorMsg2.style.color = "red";
     details.focus();
+    submit.disabled = true;
   } else {
     errorMsg2.innerHTML = "Looks Good!";
     errorMsg2.style.color = "purple";
+    submit.disabled = false;
   }
 });
 dueDate.addEventListener("change", function (event) {
   event.preventDefault();
-
-  if (event.target.value == 0) {
-    errorMsg3.innerHTML = "Please select a valid date.";
-    errorMsg3.style.color = "red";
-    dueDate.focus();
-  } else {
-    errorMsg3.innerHTML = "Looks Good!";
-    errorMsg3.style.color = "green";
-  }
-});
+  errorMsg3.innerHTML = "Looks Good!";
+  errorMsg3.style.color = "green";
+  dueDate.focus();
+}); // function statusValue(){
+//   if(dueDate.value<today){
+//       errorMsg4.innerHTML = "Status changed to overdue";
+//       errorMsg4.style.color = "green";
+//       status.value="overdue";
+//     }
+//     else{
+//         errorMsg4.innerHTML="";
+//         status.value="To Do";
+//     }
+// }
+// status.addEventListener("change",function(event){
+//   statusValue();
+// });
 
 function clearError() {
   errorMsg1.innerHTML = "";
   errorMsg2.innerHTML = "";
   errorMsg3.innerHTML = "";
-} // window.load=function(){
+  errorMsg4.innerHTML = "";
+}
 
-
+formCancel.addEventListener("click", function (e) {
+  e.preventDefault();
+  newTask.clearFields();
+  clearError();
+});
 submit.addEventListener("click", function (e) {
   e.preventDefault(); //update id checking if new id display it in the new row
 
@@ -402,11 +424,13 @@ submit.addEventListener("click", function (e) {
       var _id = contIdEdit.value;
       newTask.addTask(_id, name.value, details.value, assignee.value, dueDate.value, status.value);
       newTask.updateTask(_id);
-      newTask.refresh();
+      contIdEdit.value = ""; // newTask.refresh();
+
       submit.innerHTML = "Save";
       tableBody.innerHTML = "";
       newTask.displayTask();
       newTask.clearFields();
+      clearError();
     }
 }); //since delete and edit are dynamically generated so it is targeted with the class method 
 
@@ -425,6 +449,7 @@ tableBody.addEventListener("click", function (e) {
       return item.id == _id2;
     });
     modalName.innerHTML = "Update task";
+    modalName.disabled = true;
     $("#formTask").modal("show");
     name.value = newItem.name;
     details.value = newItem.details;
@@ -456,6 +481,10 @@ done.addEventListener("click", function (e) {
   e.preventDefault();
   newTask.displayFilter("Done");
 });
+overdue.addEventListener("click", function (e) {
+  e.preventDefault();
+  newTask.displayFilter("overdue");
+});
 },{"./task-class.js":"task-class.js","./task-manager.js":"task-manager.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -484,7 +513,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58979" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65013" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
